@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -29,7 +29,7 @@ public class User {
     private String password;
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdOn;
+    private Instant createdOn;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<DataFile> files;
