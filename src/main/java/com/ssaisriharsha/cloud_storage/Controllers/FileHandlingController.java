@@ -4,6 +4,7 @@ import com.ssaisriharsha.cloud_storage.DTOs.UserDTO;
 import com.ssaisriharsha.cloud_storage.Services.FileStorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,8 @@ public class FileHandlingController {
     public FileHandlingController(FileStorageService service) {
         this.service=service;
     }
-    public ResponseEntity<Map<String, String>> uploadFile(@RequestPart UserDTO userdto, @RequestPart MultipartFile file) throws IOException {
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> uploadFile(@RequestPart("user") UserDTO userdto, @RequestPart("file") MultipartFile file) {
         service.saveFile(userdto, file);
         Map<String, String> rMap=new HashMap<>();
         rMap.put("Status", HttpStatus.OK.toString());
