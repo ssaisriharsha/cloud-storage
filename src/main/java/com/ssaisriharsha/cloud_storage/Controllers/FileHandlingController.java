@@ -23,7 +23,7 @@ public class FileHandlingController {
         this.service=service;
     }
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> uploadFile(@RequestPart("user") UserDTO userdto, @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> uploadFile(@RequestPart("user") UserDTO userdto, @RequestPart("file") MultipartFile file) throws IOException {
         service.saveFile(userdto, file);
         Map<String, String> rMap=new HashMap<>();
         rMap.put("Status", HttpStatus.OK.toString());
