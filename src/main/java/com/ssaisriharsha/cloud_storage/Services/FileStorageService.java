@@ -5,8 +5,6 @@ import com.ssaisriharsha.cloud_storage.Entities.DataFile;
 import com.ssaisriharsha.cloud_storage.Repos.FileRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
