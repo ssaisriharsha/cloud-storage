@@ -32,6 +32,7 @@ public class User {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdOn;
+    private List<String> permissions;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<DataFile> files;
