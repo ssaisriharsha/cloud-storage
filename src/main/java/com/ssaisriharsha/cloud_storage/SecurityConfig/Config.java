@@ -22,6 +22,11 @@ public class Config {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(
+                        auth->auth
+                                .requestMatchers("/api/v1/login", "/api/v1/signup").permitAll()
+                                .anyRequest().authenticated()
+                )
                 .build();
     }
 }
