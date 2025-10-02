@@ -1,6 +1,8 @@
 package com.ssaisriharsha.cloud_storage.SecurityConfig;
 
 import com.ssaisriharsha.cloud_storage.Filters.JwtAuthenticationFilter;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Validator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,5 +30,9 @@ public class Config {
                                 .anyRequest().authenticated()
                 )
                 .build();
+    }
+    @Bean
+    public Validator esapiValidator() {
+        return ESAPI.validator();
     }
 }

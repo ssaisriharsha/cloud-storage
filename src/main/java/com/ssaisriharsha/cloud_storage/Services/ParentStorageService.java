@@ -2,6 +2,9 @@ package com.ssaisriharsha.cloud_storage.Services;
 
 import com.ssaisriharsha.cloud_storage.Exceptions.PathTraversalException;
 import com.ssaisriharsha.cloud_storage.SecurityConfig.SecureUser;
+import org.apache.commons.fileupload.InvalidFileNameException;
+import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,13 +28,16 @@ public class ParentStorageService {
     private final FileSystemStorageService fsStore;
     private final DbStorageService dbStore;
     private final String BASE_LOCATION;
+    private final Validator validator;
 
     public ParentStorageService(FileSystemStorageService fsStore,
                                 DbStorageService dbStore,
-                                @Value("${linux.storage.location}") String base) {
+                                @Value("${linux.storage.location}") String base,
+                                Validator validator) {
         this.fsStore=fsStore;
         this.dbStore=dbStore;
         this.BASE_LOCATION=base;
+        this.validator=validator;
     }
 
     public void uploadFile(MultipartFile mpFile, String relPath) {
@@ -41,7 +47,15 @@ public class ParentStorageService {
         if(!storageLocation.startsWith(userDir)) {
             throw new PathTraversalException();
         }
-        Path fileLocation=storageLocation.resolve(Paths.get(mpFile.getOriginalFilename()).getFileName());
-
+        String fileName;
+        try{
+            fileName=validator.getValidFileName("Upload", mpFile.getOriginalFilename(), null, false);
+        } catch (ValidationException e) {
+            throw new InvalidFileNameException(mpFile.getOriginalFilename(), "Filename contains invalid/dangerous characters.");
+        }
+        Path filePath=storageLocation.resolve(fileName);
+        dbStore.startUploading(mpFile, filePath);
+        fsStore.saveFile(mpFile, filePath);
+        dbStore.finishUploading(filePath);
     }
 }

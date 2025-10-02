@@ -38,8 +38,8 @@ public class DbStorageService {
     }
 
     @Transactional
-    public void finishUploading(String filePath) {
-        DataFile file=repo.findByFilePath(filePath);
+    public void finishUploading(Path filePath) {
+        DataFile file=repo.findByFilePath(filePath.toString());
         file.setStatus(FileStatus.READY);
     }
 
