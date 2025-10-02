@@ -39,12 +39,6 @@ public class AuthService {
         User u=new User();
         u.setUsername(loginDTO.getUsername());
         u.setPassword(encoder.encode(loginDTO.getPassword()));
-        List<String> permissions=new ArrayList<>();
-        permissions.add(Permissions.READ.toString());
-        permissions.add(Permissions.WRITE.toString());
-        permissions.add(Permissions.MODIFY.toString());
-        permissions.add(Permissions.DELETE.toString());
-        u.setPermissions(permissions);
         u.setEmail(loginDTO.getEmail());
         repo.save(u);
     }

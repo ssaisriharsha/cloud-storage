@@ -21,7 +21,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
     @Email
     @Column(unique = true, nullable = false)
@@ -32,7 +32,6 @@ public class User {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdOn;
-    private List<String> permissions;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<DataFile> files;

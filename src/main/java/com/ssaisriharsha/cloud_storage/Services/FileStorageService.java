@@ -48,7 +48,7 @@ public class FileStorageService {
 //        }
 ////        Files
         DataFile file1=new DataFile();
-        file1.setFilepath(storageLocation.toString());
+        file1.setFilePath(storageLocation.toString());
         repo.save(file1);
     }
 }

@@ -19,14 +19,17 @@ public class DataFile {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Column(nullable = false)
-    private String filepath;
+    @Column(nullable = false, unique = true)
+    private String filePath;
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdOn;
     @LastModifiedDate
     @Column(nullable = false)
     private Instant modifiedOn;
+    @Column(nullable = false)
+    private long size;
+    private FileStatus status;
     @ManyToOne
     @JoinColumn(name="user_id")
     @JsonBackReference

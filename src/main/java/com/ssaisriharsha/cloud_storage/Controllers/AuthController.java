@@ -28,6 +28,7 @@ public class AuthController {
         map.put("JWT", jwt);
         return ResponseEntity.ok(map);
     }
+    @PostMapping("/signup")
     public ResponseEntity<Map<Object, Object>> signup(@RequestBody @Valid UserLoginDTO loginDTO) {
         service.signup(loginDTO);
         return ResponseEntity.ok(null);
