@@ -1,5 +1,8 @@
 package com.ssaisriharsha.cloud_storage.Services;
 
+import com.ssaisriharsha.cloud_storage.Exceptions.FileExistsException;
+import com.ssaisriharsha.cloud_storage.Exceptions.FileNotFoundException;
+import com.ssaisriharsha.cloud_storage.Exceptions.NotAFileException;
 import com.ssaisriharsha.cloud_storage.Exceptions.PathTraversalException;
 import com.ssaisriharsha.cloud_storage.SecurityConfig.SecureUser;
 import org.apache.commons.fileupload.InvalidFileNameException;
@@ -10,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -55,7 +59,31 @@ public class ParentStorageService {
         }
         Path filePath=storageLocation.resolve(fileName);
         dbStore.startUploading(mpFile, filePath);
-        fsStore.saveFile(mpFile, filePath);
-        dbStore.finishUploading(filePath);
+        if (fsStore.saveFile(mpFile, filePath)) dbStore.finishUploading(filePath);
+    }
+
+    public void deleteFile(String relPath) {
+        SecureUser user=(SecureUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Path userDir=Paths.get(BASE_LOCATION).resolve(user.getUsername());
+        Path fileLocation=userDir.resolve(relPath).normalize();
+        if(!fileLocation.startsWith(userDir)) {
+            throw new PathTraversalException();
+        }
+        if(!Files.exists(fileLocation)) throw new FileNotFoundException(fileLocation);
+        if(Files.isDirectory(fileLocation)) throw new NotAFileException(fileLocation);
+        dbStore.startDeleting(fileLocation);
+        if(fsStore.deleteFile(fileLocation)) dbStore.finishDeleting(fileLocation);
+    }
+
+    public void renameFile(String oldRelPath, String newRelPath) {
+        SecureUser user=(SecureUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Path userDir=Paths.get(BASE_LOCATION).resolve(user.getUsername());
+        Path newFileLoc=userDir.resolve(newRelPath).normalize();
+        Path oldFileLoc=userDir.resolve(oldRelPath).normalize();
+        if(!newFileLoc.startsWith(userDir)||!oldFileLoc.startsWith(userDir)) throw new PathTraversalException();
+        if(Files.exists(newFileLoc)) throw new FileExistsException();
+        if(!Files.exists(oldFileLoc)) throw new FileNotFoundException(oldFileLoc);
+        dbStore.startRenaming(oldFileLoc);
+        if(fsStore.renameFile(newFileLoc, oldFileLoc)) dbStore.finishRenaming(newFileLoc, oldFileLoc);
     }
 }
